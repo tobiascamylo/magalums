@@ -5,28 +5,27 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name="tb_channel")
-
+@Table(name = "tb_channel")
 public class Channel {
 
     @Id
-    private long channelId;
+    private Long channelId;
 
     private String description;
 
     public Channel() {
     }
 
-    public Channel(long channelId, String description) {
+    public Channel(Long channelId, String description) {
         this.channelId = channelId;
         this.description = description;
     }
 
-    public long getChannelId() {
+    public Long getChannelId() {
         return channelId;
     }
 
-    public void setChannelId(long channelId) {
+    public void setChannelId(Long channelId) {
         this.channelId = channelId;
     }
 
@@ -39,23 +38,22 @@ public class Channel {
     }
 
     public enum Values {
-        EMAIL( 1L, "email"),
+        EMAIL(1L, "email"),
         SMS(2L, "sms"),
         PUSH(3L, "push"),
-        WHATSAPP(4L, "whatsapp"),;
+        WHATSAPP(4L, "whatsapp");
 
-        private long id;
+        private Long id;
         private String description;
 
-        Values(long id, String description) {
+        Values(Long id, String description) {
             this.id = id;
             this.description = description;
         }
 
-        public  Channel tochannel(){
+        public Channel toChannel() {
             return new Channel(id, description);
         }
-
-
     }
+
 }

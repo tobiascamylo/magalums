@@ -13,10 +13,10 @@ public record ScheduleNotificationDto(LocalDateTime dateTime,
 
     public Notification toNotification() {
         return new Notification(
-            dateTime,
+                dateTime,
                 destination,
                 message,
-                channel.tochannel(),
+                channel.toChannel(),
                 Status.Values.PENDING.toStatus()
         );
     }

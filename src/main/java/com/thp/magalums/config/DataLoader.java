@@ -17,7 +17,8 @@ public class DataLoader implements CommandLineRunner {
     private final ChannelRepository channelRepository;
     private final StatusRepository statusRepository;
 
-    public DataLoader(ChannelRepository channelRepository, StatusRepository statusRepository) {
+    public DataLoader(ChannelRepository channelRepository,
+                      StatusRepository statusRepository) {
         this.channelRepository = channelRepository;
         this.statusRepository = statusRepository;
     }
@@ -25,8 +26,8 @@ public class DataLoader implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         Arrays.stream(Channel.Values.values())
-                .map(Channel.Values::tochannel)
-        .forEach(channelRepository::save);
+                .map(Channel.Values::toChannel)
+                .forEach(channelRepository::save);
 
         Arrays.stream(Status.Values.values())
                 .map(Status.Values::toStatus)
