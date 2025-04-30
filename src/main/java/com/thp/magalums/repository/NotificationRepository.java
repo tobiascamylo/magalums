@@ -8,5 +8,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
-    List<Notification> findByStatusInAndDatatimeBefore(List<Status> status, LocalDateTime dataTime);
+    // Alteração aqui: "Datatime" para "DateTime"
+    List<Notification> findByStatusInAndDateTimeBefore(List<Status> status, LocalDateTime dateTime);
 }

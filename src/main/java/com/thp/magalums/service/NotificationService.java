@@ -20,7 +20,7 @@ public class NotificationService {
         this.notificationRepository = notificationRepository;
     }
 
-    public  void scheduleNotification(ScheduleNotificationDto dto) {
+    public void scheduleNotification(ScheduleNotificationDto dto) {
         notificationRepository.save(dto.toNotification());
     }
 
@@ -36,8 +36,36 @@ public class NotificationService {
         }
     }
 
+    public boolean updateNotification(Long notificationId, ScheduleNotificationDto dto) {
+        var notificationOpt = findById(notificationId);
+        if (notificationOpt.isEmpty()) {
+            return false; // Notificação não encontrada
+        }
+
+        var notification = notificationOpt.get();
+
+        // Verifica se o status_id é 1 (PENDING) antes de permitir a atualização
+        if (notification.getStatus().getStatusId() != 1) {
+            return false; // Não pode atualizar notificações que não estão "PENDING"
+        }
+
+        // Verifica se o novo dateTime não é no passado
+        if (dto.dateTime().isBefore(LocalDateTime.now())) {
+            return false; // Não pode atualizar a notificação com um dateTime no passado
+        }
+
+        // Atualiza os dados da notificação
+        notification.setDateTime(dto.dateTime());
+        notification.setDestination(dto.destination());
+        notification.setMessage(dto.message());
+        notification.setChannel(dto.channel().toChannel());
+
+        notificationRepository.save(notification);
+        return true;
+    }
+
     public void checkAndSend(LocalDateTime datetime) {
-        var notifications = notificationRepository.findByStatusInAndDatatimeBefore(
+        var notifications = notificationRepository.findByStatusInAndDateTimeBefore(
                 List.of(Status.Values.PENDING.toStatus(), Status.Values.ERROR.toStatus()),
                 datetime
         );
@@ -47,7 +75,6 @@ public class NotificationService {
 
     private Consumer<Notification> sendNotification() {
         return n -> {
-
             // TODO - REALIZAR O ENVIO DA NOTIFICACAO
 
             n.setStatus(Status.Values.SUCESS.toStatus());

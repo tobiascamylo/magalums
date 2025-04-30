@@ -1,7 +1,6 @@
 package com.thp.magalums.entity;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -12,7 +11,8 @@ public class Notification {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long notificationId;
 
-    private LocalDateTime datatime;
+    @Column(name = "dateTime")
+    private LocalDateTime dateTime; // Corrigido para "dateTime" (erro de digitação)
 
     private String destination;
 
@@ -29,8 +29,8 @@ public class Notification {
     public Notification() {
     }
 
-    public Notification(LocalDateTime dataTime, String destination, String message, Channel channel, Status status) {
-        this.datatime = dataTime;
+    public Notification(LocalDateTime dateTime, String destination, String message, Channel channel, Status status) {
+        this.dateTime = dateTime; // Usando "dateTime" aqui também
         this.destination = destination;
         this.message = message;
         this.channel = channel;
@@ -45,12 +45,12 @@ public class Notification {
         this.notificationId = notificationId;
     }
 
-    public LocalDateTime getDatatime() {
-        return datatime;
+    public LocalDateTime getDateTime() { // Corrigido para "getDateTime"
+        return dateTime;
     }
 
-    public void setDatatime(LocalDateTime datatime) {
-        this.datatime = datatime;
+    public void setDateTime(LocalDateTime dateTime) { // Corrigido para "setDateTime"
+        this.dateTime = dateTime;
     }
 
     public String getDestination() {
