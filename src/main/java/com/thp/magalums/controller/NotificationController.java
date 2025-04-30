@@ -20,9 +20,15 @@ public class NotificationController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> scheduleNotification(@RequestBody ScheduleNotificationDto dto ) {
-       notificationService.scheduleNotification(dto);
-       return ResponseEntity.accepted().build();
+    public ResponseEntity<Void> scheduleNotification(@RequestBody ScheduleNotificationDto dto) {
+        try {
+            // Verifica e cria a notificação
+            notificationService.scheduleNotification(dto);
+            return ResponseEntity.status(HttpStatus.CREATED).build();  // 201 Created, sem corpo
+        } catch (IllegalArgumentException e) {
+            // Se a data for inválida, retorna erro com 400 Bad Request e a mensagem no corpo
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
     }
 
     @GetMapping("/{notificationId}")

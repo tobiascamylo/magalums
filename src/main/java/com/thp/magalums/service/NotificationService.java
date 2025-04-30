@@ -21,6 +21,12 @@ public class NotificationService {
     }
 
     public void scheduleNotification(ScheduleNotificationDto dto) {
+        // Verifica se a data é no passado
+        if (dto.dateTime().isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("A data e hora não podem ser no passado.");
+        }
+
+        // Se a data for válida, cria a notificação
         notificationRepository.save(dto.toNotification());
     }
 
