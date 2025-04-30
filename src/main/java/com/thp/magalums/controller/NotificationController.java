@@ -37,27 +37,38 @@ public class NotificationController {
     @PutMapping("/{notificationId}")
     public ResponseEntity<String> updateNotification(@PathVariable("notificationId") Long notificationId,
                                                      @RequestBody ScheduleNotificationDto dto) {
+        // Tenta atualizar a notificação
         boolean updated = notificationService.updateNotification(notificationId, dto);
 
+        // Se a notificação foi atualizada com sucesso
         if (updated) {
             return ResponseEntity.ok().build();  // Atualização bem-sucedida
         }
 
-        // Verifica se o erro foi relacionado ao dateTime no passado
+        // Recupera a notificação para verificarmos o status
+        var notificationOpt = notificationService.findById(notificationId);
+        if (notificationOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("A notificação com o ID " + notificationId + " não foi encontrada.");
+        }
+
+        var notification = notificationOpt.get();
+
+        // Se o status não for PENDING (statusId != 1), a atualização não é permitida
+        if (notification.getStatus().getStatusId() != 1) {  // 1 é o status "PENDING"
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("Não é possível atualizar a notificação porque o status atual não é 'PENDING'.");
+        }
+
+        // Se o status for PENDING, valida o campo dateTime
         if (dto.dateTime().isBefore(LocalDateTime.now())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("O campo 'dateTime' não pode ser no passado.");
         }
 
-        // Se a notificação não foi encontrada
-        if (!notificationService.findById(notificationId).isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("A notificação com o ID " + notificationId + " não foi encontrada.");
-        }
-
-        // Caso contrário, a notificação não está no status PENDING
-        return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body("Não é possível atualizar a notificação porque o status atual não é 'PENDING'.");
+        // Caso o status seja 'PENDING' e o dateTime for válido, a notificação será atualizada
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Erro inesperado ao tentar atualizar a notificação.");
     }
 
     @DeleteMapping("/{notificationId}")
